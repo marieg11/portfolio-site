@@ -1,0 +1,1557 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Portfolio</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <meta name="description" content="Portfolio of Name - experience, projects, and skills." />
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    /* ===================== THEME ===================== */
+    :root{
+      --bg:#0e385b;
+      --panel:#3a5372;       /* card & button background */
+      --text:#f0f0f0;
+      --muted:#c0c0c0;       /* skills chip text color */
+      --ring:#75bcd2;
+      --shadow:none;         /* no shadows in dark mode */
+
+      /* Hero title size */
+      /*--hero-size:clamp(24px, 4vw, 34px);*/
+
+      --section-title-size: 1.75rem; 
+      --hero-size: var(--section-title-size);
+
+      /*spacing between sections*/
+      --section-spacing:40px;   
+    }
+    :root.light{
+      --bg:#eaf8e0;
+      --panel:#f5fcf2;
+      --text:#393939;
+      --muted:#898989;
+      --ring:#7bb078;
+      --shadow:none;         /* no shadows in light mode */
+    }
+
+    /* ===================== BASE ===================== */
+    *{box-sizing:border-box}
+    html,body{min-height:100%}
+    body{
+      margin:0;
+      font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background:var(--bg);
+      color:var(--text);
+    }
+    .container{max-width:1100px; margin:0 auto; padding:24px}
+    a{color:var(--text); text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    /* Buttons (neutral) */
+    .btn{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 14px; border-radius:12px; border:1px solid var(--ring);
+      background:var(--panel); color:var(--text); text-decoration:none;
+      box-shadow:var(--shadow);
+      font-size:1rem; line-height:1.6;
+      height:34px;               /* unify height with header buttons */
+    }
+    .btn:hover{
+      text-decoration:underline;
+    }
+
+    .btn--ghost{background:var(--panel)}
+
+    .btn--quiet{
+      background:transparent; border:1px solid var(--ring);
+      color:var(--muted); box-shadow:var(--shadow); padding:6px 10px; border-radius:10px;
+      font-size:1rem; line-height:1.6;
+      height:auto;               /* allow smaller quiet buttons; min-height added later */
+    }
+    .btn--quiet:hover{
+      background:color-mix(in oklab, var(--panel) 85%, transparent);
+      text-decoration:underline;
+    }
+
+    /* ===== Header (Left / Center / Right) ===== */
+    header{
+      position:sticky;
+      top:0;
+      z-index:20;
+      backdrop-filter:saturate(160%) blur(8px);
+      background:color-mix(in oklab, var(--bg) 85%, transparent);
+      border-bottom:1px solid color-mix(in oklab, var(--ring) 50%, transparent);
+    }
+    nav.nav{
+      display:grid;
+      grid-template-columns:auto 1fr auto; /* left / center / right */
+      align-items:center;
+      column-gap:16px;
+      row-gap:8px;
+    }
+    .nav-left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .nav-center{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+    /* Hide desktop nav buttons on all screen sizes */
+    .nav-links{
+      display:none;
+      justify-content:center;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .nav-right{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      justify-content:flex-end;
+      justify-self:end;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      text-decoration:none; color:inherit; font-weight:700;
+    }
+    .logo{
+      width:34px; height:34px; border-radius:10px; display:grid; place-items:center;
+      background:var(--panel); color:var(--text); border:1px solid var(--ring); box-shadow:var(--shadow);
+    }
+    .nav-center .btn{box-shadow:var(--shadow)}
+
+    /* Toggle: rounded rectangle */
+    .toggle{
+      border:1px solid var(--ring);
+      border-radius:10px;
+      padding:6px 12px;
+      background:var(--panel);
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      color:var(--text);
+      font-weight:600;
+      font-size:0.9rem;
+      box-shadow:var(--shadow);
+      cursor:pointer;
+      height:34px;          /* same height as logo & menu */
+      line-height:1;
+    }
+    .toggle:hover #{
+      text-decoration:underline;
+    }
+
+    /* ===== Hamburger button (now visible on ALL screen sizes) ===== */
+    .menu-toggle{
+      border:1px solid var(--ring);
+      border-radius:10px;
+      padding:6px 12px;
+      background:var(--panel);
+      color:var(--text);
+      cursor:pointer;
+      font-size:1.2rem;
+      box-shadow:var(--shadow);
+      height:34px;            /* same height */
+      line-height:1;
+      align-items:center;
+      justify-content:center;
+      display:inline-flex;     /* <- always visible */
+    }
+
+    .mobile-menu{
+      position:fixed;
+      top:var(--header-height, 72px); /* fallback 72px */
+      /*right:24px;                            same padding as .container → lines up with ☰ */
+      right:1.5rem;                   /* sits under the hamburger on small screens */
+      left:auto;                            /* no longer full-width */
+      width:min(360px, 70vw);               /* narrower panel (max ~340px, 70% of viewport) */
+
+      background:color-mix(in oklab, var(--panel) 85%, transparent);
+      backdrop-filter:saturate(160%) blur(8px);   /* same “frosted” feel as header */
+      box-shadow:var(--shadow);
+      /*border-radius:0 0 0 16px;             optional: soften inner corner */
+      border-radius:16px;
+
+      padding:16px 24px 24px;
+      display:none;
+      z-index:30;                           /* above sticky header (which is 20) */
+
+      /* limit height and allow scrolling inside */
+      max-height:calc(100vh - var(--header-height, 72px) - 16px);
+      overflow-y:auto;
+    }
+    .mobile-menu.open{
+      display:block;
+    }
+    .mobile-menu-header{
+      display:flex;
+      justify-content:flex-end;    /* X on the right edge = under the ☰ button */
+      /*margin:4px 0 8px 0;     tiny top margin so it isn’t glued to the edge */
+      margin-bottom:8px;
+    }
+
+    /* On wide screens, align the panel with the right edge of the 1100px container */
+    @media (min-width: 1200px){
+      .mobile-menu{
+        right:calc((100vw - 1100px)/2 + 24px);
+        /*              ^ container side margin  ^ container padding */
+      }
+    }
+    
+    .mobile-menu-close{
+      border:none;
+      background:transparent;
+      color:var(--text);
+      font-size:1.4rem;
+      cursor:pointer;
+    }
+    .mobile-menu a{
+      display:block;
+      padding:10px 0;
+      color:var(--text);
+      text-decoration:none;
+      font-size:1.05rem;
+    }
+    .mobile-menu a:hover{
+      text-decoration:underline;
+    }
+
+    .visually-hidden{
+      position:absolute;
+      width:1px;
+      height:1px;
+      padding:0;
+      margin:-1px;
+      overflow:hidden;
+      clip:rect(0 0 0 0);
+      white-space:nowrap;
+      border:0;
+    }
+
+    /* On small screens:
+       - keep hamburger
+       - hide text label on theme toggle
+    */
+    @media (max-width:700px){
+      #{
+        display:none;          /* emoji only */
+      }
+      .toggle{
+        padding:6px 8px;       /* tighter horizontally; height stays 34px */
+      }
+    }
+
+    /* ===== Top ===== */
+    .top{display:grid; gap:18px; padding:var(--section-spacing) 0}
+    .top .contact{display:flex; flex-wrap:wrap; gap:10px}
+    .pill{border:1px solid var(--ring); border-radius:999px; padding:6px 10px; color:var(--muted); background:color-mix(in oklab, var(--panel) 70%, transparent)}
+    .summary{display:grid; gap:6px}
+    h1{
+      font-size:var(--hero-size);
+      margin:0;
+      line-height:1.1;
+    }
+    .elevator{font-size:1.05rem; color:var(--muted)}
+
+    /* ===== Sections / Cards ===== */
+    .section{padding:var(--section-spacing) 0}
+    .section h2{margin:0 0 12px 0}
+    .card{
+      background:var(--panel);
+      border:1px solid var(--ring);
+      border-radius:16px;
+      padding:16px;
+      padding-bottom: 24px; 
+      box-shadow:var(--shadow);
+    }
+    footer{padding:28px 0; color:var(--muted); text-align:center}
+    .copyright{
+      color:var(--text);
+    }
+    section{
+      scroll-margin-top:80px;   /* adjust to your header height */
+    }
+
+    /* ===== Timeline ===== */
+    .timeline{position:relative; margin:24px 0;}
+    .timeline::before{
+      content:"";
+      position:absolute;
+      top:0;
+      bottom:0;
+      left:50%;
+      width:2px;
+      background:linear-gradient(180deg, transparent, var(--ring), transparent);
+      z-index:0;
+    }
+    .item{position:relative; width:50%; padding:14px;}
+    .item h3{margin:0 0 4px 0}
+    .item .meta{color:var(--muted); font-weight:600; margin-bottom:8px}
+    .item .meta a {
+      color: inherit;        /* use the same muted color */
+      font-weight: inherit;  /* don't make it heavier */
+      text-decoration: none; /* no underline by default */
+    }
+    .item .meta a:hover {
+      color: inherit;        /* stay same color on hover */
+      text-decoration: underline; /* just add the underline */
+    }
+    .item ul{margin:8px 0 0 0;    /* no outer left margin */
+      padding-left:18px; /*small padding so bullets don’t touch the border*/
+    }
+    .item[data-side="left"]{left:0; padding-right:28px}
+    .item[data-side="right"]{left:50%; padding-left:28px}
+    .dot{
+      position:absolute;
+      top:22px;
+      left:50%;
+      transform:translate(-50%,-50%);
+      background:var(--panel);
+      border:2px solid var(--ring);
+      width:55px; /*logo box sizes*/
+      height:55px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      box-shadow:var(--shadow);
+      z-index:2;
+    }
+    .dot img{width:40px; height:40px} /*logo sizes*/
+
+    .item .card{
+      background:var(--panel);
+      z-index:1;
+      position:relative;
+    }
+    .timeline .card{
+      padding-top:40px; /* push content down so logo doesn't collide with title */
+      padding-bottom: 24px; 
+    }
+
+
+    /* ===== Education grid ===== */
+    .edu-subsection{
+      margin-top:25px;                 /* space BEFORE the subsection title */
+    }
+
+    /* Extra spacing before every subsection that follows another one (so “Certificates & Courses”, etc.) */
+    .edu-subsection + .edu-subsection{
+      margin-top:50px;   
+    }
+
+    /* Subsection titles: same look as "Programming" in Skills card */
+    .edu-label{
+      font-size:1.25rem;
+      font-weight:600;
+      color:var(--muted);
+      margin:0;  
+    }
+
+    /* Grid: 1 column on small, MAX 2 columns on wider screens */
+    .edu-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));       /* default = single column */
+      row-gap:45px;                    /* vertical space between rows */
+      column-gap:18px;                 /* horizontal space between cards */
+      margin-top:50px;                 /* space AFTER the title, before the cards */
+    }
+
+    
+    @media (min-width: 780px){
+      .edu-grid{
+        grid-template-columns:repeat(2, minmax(0, 1fr)); /* at most 2 per row */
+      }
+    }
+    
+
+    /* Make edu cards behave like experience cards */
+    .edu-card{
+      position:relative;
+      padding:16px;
+      padding-top:40px;                /* so the title doesn't crash into logo */
+      padding-bottom: 24px;
+    }
+
+    /* Heading & meta inside edu cards = same as experience */
+    .edu-card h3{
+      margin:0 0 4px 0;                /* tight gap under title (like .item h3) */
+    }
+
+    .edu-card .meta{
+      color:var(--muted);
+      font-weight:600;
+      margin-bottom:8px;
+    }
+
+    /* Bullet spacing in education cards = experience cards */
+    .edu-card ul{
+      margin:8px 0 0 0;
+      padding-left:18px;               /* slight indent so bullets don't hit edge */
+    }
+
+    /* Icon capsule: centered on top edge like experience logos */
+    .edu-icon{
+      position:absolute;
+      top:0;
+      left:50%;
+      transform:translate(-50%, -50%);
+      
+      width:55px;  /*size of logo box*/
+      height:55px;
+      padding:4px;
+      
+      border-radius:12px;
+      background:var(--panel);
+      border:2px solid var(--ring);
+      
+      place-items:center;
+      display:grid;
+    }
+
+    
+    /* Make the link fill the whole capsule */
+    .edu-icon a{
+      display:grid;
+      place-items:center;
+      width:100%;
+      height:100%;
+      text-decoration:none;
+    }
+    
+    .edu-icon img{ /*control image size inside logo box*/
+      width:90%;
+      height:90%;
+      object-fit:contain;
+
+      /* smooth hover on the logo itself */
+      transition:
+        transform 150ms ease,
+        filter 150ms ease;
+    }
+
+    /* Hover effect for the logo capsule */
+    @media (hover:hover){
+      .edu-icon:hover img{
+        transform:scale(1.05);
+        filter:brightness(1.05);
+      }
+    }
+
+
+    /* MOBILE TIMELINE LAYOUT – make left & right items look the same */
+    @media (max-width: 900px){
+      .timeline::before{left:20px}
+      .item{
+        width:100%;
+        left:0 !important;
+        padding:14px 14px 14px 34px; /*control space between logo and card*/
+      }
+      .item[data-side="left"],
+      .item[data-side="right"]{
+        padding-left:34px; /*control space between logo and card*/
+        padding-right:14px;
+      }
+      .dot{left:20px}
+    }
+    
+    .dot a{
+      display:grid;
+      place-items:center;
+      width:100%;
+      height:100%;
+    } /*so the link fills the dot*/
+
+    .dot a:hover img{
+      /* optional tiny hover effect */
+      transform:scale(1.03);
+    }
+
+
+    /* ===== Grid (Projects) ===== */
+    .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px}
+    /*.card img{width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:10px; margin-bottom:10px}*/
+    .project-card img{width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:10px; margin-bottom:10px}
+
+
+    /* ===== Project video thumbnails (test 2) ===== */
+    .proj-thumbnail-button{
+      background:none;
+      border:none;
+      padding:0;
+      margin:0;
+      width:100%;
+      text-align:inherit;
+      display:block;
+      cursor:pointer;
+    }
+
+    .proj-thumbnail-wrapper{
+      position:relative;
+      border-radius:10px;
+      overflow:hidden;
+    }
+
+    .proj-thumbnail-wrapper img{
+      display:block;
+      width:100%;
+      transition:transform 0.25s ease, filter 0.25s ease;
+    }
+
+    /* Hover effect: slight zoom + darken (desktop / hover devices only) */
+    @media (hover:hover){
+      .proj-thumbnail-wrapper:hover img{
+        transform:none;
+        filter:none;
+      }
+    }
+
+    /* “Play” cue: centered rounded button */
+    .proj-thumbnail-play{
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%, -50%);
+      width:52px;
+      height:52px;
+      background:rgba(0,0,0,0.55);  /* button fill color */
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:12px;
+      transition:
+          background 150ms ease,
+          transform 150ms ease,
+          box-shadow 150ms ease;
+    }
+
+    /* Hover effect on the play button */
+    @media (hover:hover){
+      .proj-thumbnail-play:hover{
+        background:rgba(0,0,0,0.8);              /* darker */
+        transform:translate(-50%, -50%) scale(1.06); /* slight pop */
+        box-shadow:0 4px 10px rgba(0,0,0,0.35);
+      }
+    }
+
+    .proj-thumbnail-play::before{
+      content:"";
+      width:0;
+      height:0;
+      border-left:18px solid #ffffff;     /* triangle color */
+      border-top:11px solid transparent;
+      border-bottom:11px solid transparent;
+      margin-left:3px;                    /* optical centering */
+    }
+
+    /* ===== Video overlay popup ===== */
+    .proj-video-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.6);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:40;
+    }
+
+    .proj-video-overlay.open{
+      display:flex;
+    }
+
+    .proj-video-inner{
+      background:var(--panel);
+      border-radius:16px;
+      padding:8px;
+      max-width:550px;
+      width:80%;
+      box-shadow:var(--shadow);
+    }
+
+    .proj-video-inner video{
+      display:block;
+      width:100%;
+      border-radius:10px;
+      max-height:55vh;
+    }
+
+    .proj-video-close{
+      background:transparent;
+      border:none;
+      color:var(--text);
+      font-size:1.4rem;
+      cursor:pointer;
+      align-self:flex-end;
+      margin-bottom:4px;
+    }
+
+    @media (max-width:700px){
+      .video-modal{
+        width:80vw;
+        max-width:none;
+      }
+    }
+
+    /* ===== Chips (skills) ===== */
+    .badges{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+    .badge{
+      font-size:1rem; line-height:1.6;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--ring);
+      color:var(--muted); background:transparent;
+    }
+
+    /* === Unified chip / quiet-button height === */
+    .pill,
+    .badge,
+    .btn--quiet{
+      display:inline-flex;
+      align-items:center;
+      min-height:30px;    /* control height here */
+      padding:4px 10px;   /* a bit less vertical padding */
+      line-height:1.3;    /* tighter line height than 1.6 */
+    }
+
+    /* Small icon buttons at bottom of cards */
+    .card-links{
+      margin-top:10px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .card-links a{
+      text-decoration:none;      /* remove underline on icons */
+    }
+
+    /* Circular icon button */
+    .icon-circle{
+      --icon-size:40px;          /* tweak this to make box bigger/smaller */
+
+      width:var(--icon-size);
+      height:var(--icon-size);
+      border-radius:12px;
+      border:1px solid var(--ring);
+      background:var(--panel);
+      
+      display:grid;
+      /*align-items:center;
+      justify-content:center;*/
+      place-items:center;   /* centers content exactly like .edu-icon */
+
+      padding:0;                    /* no extra padding */
+      line-height:0;                 kill inline text line box 
+
+      
+      /*font-size:1rem;            size of emoji / glyph inside
+      color:var(--text);*/
+      box-shadow:var(--shadow);
+      transition:
+        background 150ms ease,
+        transform 150ms ease,
+        box-shadow 150ms ease;
+    }
+
+    .icon-circle:hover{
+      background:color-mix(in oklab, var(--panel) 80%, transparent);
+      transform:translateY(-1px);
+      text-decoration:none;
+    }
+
+    /* Make image icons fit nicely inside the circle */
+    .icon-circle img{
+      width:25px;          /* change these to adjust image size */
+      height:25px;
+      object-fit:contain;
+      display:block; /* remove baseline gap */
+      justify-self:center;             /* extra “belt & suspenders” centering */
+      align-self:center;
+    }
+
+
+    /* ===== Project meta ===== */
+    .proj-meta{margin:6px 0 8px 0; color:var(--muted); font-weight:600}
+    .proj-meta strong{color:inherit; font-weight:700}
+    .proj-meta a{
+      color: inherit;
+      font-weight: inherit;
+      text-decoration: none;
+    }
+    .proj-meta a:hover{
+      color: inherit;
+      text-decoration: underline;
+    }
+
+    /* Optional: make the thumbnail link behave like a block */
+    .project-image-link{
+      display: block;
+    }
+    .project-image-link img{
+      display: block;
+      transition:none;
+    }
+    .project-image-link:hover img,
+    .project-image-link:focus-visible img{
+      transform:none;
+      filter:none;
+    }
+    
+    /* ===== Skills & Contact styling ===== */
+    #skills .card, #skills .card *{color:var(--muted)}
+    #contact .card, #contact .card *, #contact .card strong{color:var(--muted)}
+    #contact .card strong{font-weight:600}
+
+    #skills .card h3{
+      font-size:1rem;
+      font-weight:600;
+      margin:0 0 12px 0; /*vertical space under each heading*/
+    }
+    #skills .badges{
+      margin-bottom: 16px; /*space after the chips block (before the next heading)*/
+    }
+
+
+    /* ===== Skills & Contact styling ===== */
+    #skills .card, #skills .card *{color:var(--muted)}
+    #contact .card, #contact .card *, #contact .card strong{color:var(--muted)}
+    #contact .card strong{font-weight:600}
+
+    /* Make text typed into the form boxes black */
+    #contact .card .contact-form input,
+    #contact .card .contact-form textarea{
+      color:var(--text) !important;
+      -webkit-text-fill-color:var(--text) !important;
+    }
+
+    #contact .btn{
+      font-family:inherit;
+      font-size:0.95rem;
+      font-weight:600;
+      line-height:normal;
+    }
+
+    #contact .btn:focus{
+      outline:none;
+      border-color:var(--ring);
+      box-shadow: inset 0 0 0 1px var(--ring);
+    }
+
+    #skills .card h3{
+      font-size:1rem;
+      font-weight:600;
+      margin:0 0 8px 0;
+    }
+
+    
+    .contact-form{
+      display:grid;
+      gap:14px;
+    }
+
+    .field{
+      display:grid;
+      gap:6px;
+    }
+
+    .field-label{
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+
+    /* --- Prevent Chrome/Edge autofill from changing the input background --- */
+    .contact-form input:-webkit-autofill,
+    .contact-form input:-webkit-autofill:hover,
+    .contact-form input:-webkit-autofill:focus,
+    .contact-form textarea:-webkit-autofill,
+    .contact-form textarea:-webkit-autofill:hover,
+    .contact-form textarea:-webkit-autofill:focus{
+      -webkit-text-fill-color: var(--text);                 /* keep text color */
+      -webkit-box-shadow: 0 0 0px 1000px
+        color-mix(in oklab, var(--panel) 70%, transparent) inset; /* force background */
+      box-shadow: 0 0 0px 1000px
+        color-mix(in oklab, var(--panel) 70%, transparent) inset;
+      caret-color: var(--text);
+      transition: background-color 9999s ease-out 0s;       /* prevents flash */
+    }
+
+    .contact-form input,
+    .contact-form textarea{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--ring);
+      background:color-mix(in oklab, var(--panel) 70%, transparent);
+      color:var(--text);
+      font:inherit;
+    }
+
+    .contact-form textarea{
+      resize:vertical;
+      min-height:140px;
+    }
+
+    .contact-form input:focus,
+    /*.contact-form textarea:focus{
+      background: color-mix(in oklab, var(--panel) 70%, transparent);
+      outline:2px solid color-mix(in oklab, var(--ring) 70%, transparent);
+      outline-offset:2px;
+    }*/
+    .contact-form textarea:focus{
+      outline:none;
+      box-shadow: inset 0 0 0 1px var(--ring);
+    }
+
+    .form-note{
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+
+    
+  </style>
+</head>
+
+
+
+  
+<body>
+  <header>
+    <div class="container">
+      <nav class="nav" aria-label="Primary">
+        <div class="nav-left">
+          <!--<a class="brand" href="#about" data-scroll="#about">
+            <img src="images/favicon.png" alt="personal logo" class="logo">-->
+          <a class="brand" href="#about" data-scroll="#about"><span class="logo">MG</span>
+          </a>
+        </div>
+
+        <div class="nav-center">
+          <!-- Desktop nav buttons kept in DOM but hidden via CSS -->
+          <div class="nav-links" aria-label="Section navigation">
+            <a class="btn btn--ghost" href="#about"        data-scroll="#about">About</a>
+            <a class="btn btn--ghost" href="#experience" data-scroll="#experience">Professional Experience</a>
+            <a class="btn btn--ghost" href="#professional-development" data-scroll="#professional-development">Professional Development</a>
+            <a class="btn btn--ghost" href="#volunteer"  data-scroll="#volunteer">Volunteer Experience</a>
+            <!--<a class="btn btn--ghost" href="#projects"   data-scroll="#projects">Projects</a>-->
+            <a class="btn btn--ghost" href="#education"   data-scroll="#education">Education</a>
+            <a class="btn btn--ghost" href="#skills"     data-scroll="#skills">Skills</a>
+            <a class="btn btn--ghost" href="#contact"    data-scroll="#contact">Contact</a>
+          </div>
+        </div>
+
+        <div class="nav-right">
+          <button id="themeToggle" type="button" class="toggle" aria-pressed="false" title="Toggle theme">
+            <span id="themeIcon">☀️</span>
+            <!-- <span id="themeIcon">☀️</span><span id="">Light Mode</span> this is if you want text next to light toggle emoji -->
+          </button>
+
+          <!-- Hamburger menu button (desktop + mobile) -->
+          <button id="menuToggle" class="menu-toggle" type="button"
+                  aria-label="Open navigation" aria-expanded="false">
+            ☰
+          </button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Mobile / overlay menu panel (used for ALL screen sizes now) -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+      <button id="mobileMenuClose" class="mobile-menu-close" type="button" aria-label="Close navigation">✕</button>
+    </div>
+    <nav aria-label="Mobile navigation">
+      <a href="#about"        data-scroll="#about">About</a>
+      <a href="#experience" data-scroll="#experience">Professional Experience</a>
+      <a href="#professional-development" data-scroll="#professional-development">Professional Development</a>
+      <a href="#volunteer"  data-scroll="#volunteer">Volunteer Experience</a>
+      <!--<a href="#projects"   data-scroll="#projects">Projects</a>-->
+      <a href="#education"   data-scroll="#education">Education</a>
+      <a href="#skills"     data-scroll="#skills">Skills</a>
+      <a href="#contact"    data-scroll="#contact">Contact</a>
+    </nav>
+  </div>
+
+  <main id="top" class="container">
+    <!-- ===== TOP ===== -->
+    <section id="about" class="top" aria-labelledby="intro-title">
+      <h1 id="intro-title">Hi, I'm Marie.</h1>
+      <div class="contact" aria-label="Primary contact">
+        <span class="pill">📍 Toronto, Ontario</span>
+        <!---<a class="pill" href="https://www.linkedin.com/in/marieg11/" target="_blank" rel="noopener">🔗 LinkedIn</a>-->
+        <a class="pill" href="mailto:marieggg@my.yorku.ca">✉️ Email</a>
+        <a class="pill" href="#contact" data-scroll="#contact">💬 Get In Touch</a>
+        <!--<a class="pill" href="https://marieg11.github.io/portfolio/images/resume.pdf" target="_blank" rel="noopener">📄Résumé</a>-->
+      </div>
+      <div class="summary">
+        <p>I'm a psychology major at York University, interested in marketing, project management and a data-focued approach to understanding how people interact with products and brands.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===== PROFESSIONAL EXPERIENCE ===== -->
+    <section id="experience" class="section" aria-labelledby="pro-title">
+      <h2 id="pro-title">Professional Experience</h2>
+      <p class="elevator" style="margin:0"></p>
+      <div class="timeline" aria-label="Professional timeline">
+        
+        
+        <div class="item" data-side="left">
+          <div class="dot"> 
+            <a href="https://www.ualberta.ca/en/psychology/index.html" target="_blank" rel="noopener" aria-label="ualberta logo">
+              <img alt="ualberta logo" src="images/ualberta.png">
+            </a>
+          </div>
+          <div class="card">
+            <h3>Research Assistant</h3>
+            <div class="meta"> University of Alberta • Apr 2026 - Aug 2026 • Edmonton, Canada
+            </div>
+            <ul>
+              <li>Preprocessed and cleaned participant datasets, integrating reaction times, memory test scores, and physiological signals using Python (pandas, numpy).</li>
+              <li>Performed statistical analyses (paired t-tests, mixed ANOVA) to assess the impact of sleep deprivation on memory recall and cognitive performance by leveraging R.</li>
+              <li>Developed interactive data visualizations using Python (Matplotlib/ Seaborn/ Plotly) to visualize trends in memory retention scores, reaction time variations, and physiological responses across experimental conditions.</li>
+            </ul>
+
+            
+          </div>
+        </div>
+        
+        
+        
+        
+        <div class="item" data-side="left">
+          <div class="dot"> 
+            <a href="https://www.etsy.com/ca/" target="_blank" rel="noopener" aria-label="Etsy Canada">
+              <img alt="Etsy logo" src="images/etsy.png">
+            </a>
+          </div>
+          <div class="card">
+            <h3>Shop Owner</h3>
+            <div class="meta"> Etsy Inc. • Jan 2026 - Present • Remote, Canada
+            </div>
+            <ul>
+              <li>Developed and executed targeted digital marketing campaigns (SEO optimization, social media promotions) that increased shop traffic.</li>
+              <li> Tracked and analyzed Etsy dashboard metrics, social media insights, and customer behavior data to identify trends, optimize product listings, and improve overall sales performance.</li>
+              <li> Designed and tested data-driven marketing strategies (A/B testing product listings, optimizing pricing, and timing promotions), resulting in measurable increases in engagement and revenue.</li>
+            </ul>
+
+            
+          </div>
+        </div>
+        
+              
+        
+        <div class="item" data-side="right">
+          <div class="dot"> 
+            <a href="https://www.developforgood.org/" target="_blank" rel="noopener" aria-label="Develop For Good">
+              <img alt="DFG logo" src="images/developforgood.png">
+            </a>
+          </div>
+          <div class="card">
+            <h3>Student Software Engineer</h3>
+            <div class="meta"> Develop for Good • Nov 2025 - Feb 2026 • Remote, USA
+            </div>
+            <ul>
+              <li>Developed and customized a WordPress website for a non-profit organization, translating requirements into a functional, user-friendly digital presence.</li>
+              <li>Implemented custom themes, plugins, and site features using PHP, HTML, CSS, and JavaScript to improve usability, accessibility, and performance.</li>
+              <li>Maintained site reliability through testing, debugging and consistent updates, improving site security, responsiveness, and content management workflows.</li>
+            </ul>
+
+            <div class="card-links" aria-label="Links for this role">
+              <!-- Certificate -->
+              <a class="icon-circle"
+                 href="images/dfg-certificate-2026.png"
+                 target="_blank" rel="noopener"
+                 aria-label="certificate">
+                <img src="images/certificate.png" alt="">
+              </a>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="item" data-side="left">
+          <div class="dot"> 
+            <a href="https://www.developforgood.org/" target="_blank" rel="noopener" aria-label="Develop For Good">
+              <img alt="DFG logo" src="images/developforgood.png">
+            </a>
+          </div>
+          <div class="card">
+            <h3>Student Data Engineer</h3>
+            <div class="meta"> Develop for Good • Nov 2024 - Feb 2025 • Remote, USA
+            </div>
+            <ul>
+              <li>Designed and implemented scalable ETL data pipelines and collaborated with the client to gather requirements and develop custom solutions.</li>
+              <li>Automated data workflows using Google Cloud APIs, processing large datasets with Python and SQL to improve efficiency.</li>
+              <li>Developed interactive dashboards, enabling clients to track KPIs and make data-driven decisions with clear visual insights.</li>
+            </ul>
+
+            <div class="card-links" aria-label="Links for this role">
+              <!-- Certificate -->
+              <a class="icon-circle"
+                 href="images/dfg-certificate-2025.png"
+                 target="_blank" rel="noopener"
+                 aria-label="certificate">
+                <img src="images/certificate.png" alt="">
+              </a>
+            </div>
+            
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+
+    <!-- ===== PROFESSIONAL DEVELOPMENT ===== -->
+    <section id="professional-development" class="section" aria-labelledby="pro-title">
+      <h2 id="pro-title">Professional Development</h2>
+      <p class="elevator" style="margin:0"></p>
+      <div class="timeline" aria-label="Professional development timeline">
+
+
+
+        <div class="item" data-side="left">
+          <div class="dot"> 
+            <a href="https://www.bvcc.vc/programs" target="_blank" rel="noopener" aria-label="BVCC Programs">
+              <img alt="BVCC logo" src="images/bvcc.png">
+            </a>
+          </div>
+          <div class="card">
+            <h3>Product Management Career Curriculum</h3>
+            <div class="meta"> BVCC • Sep 2025 - Nov 2025 • Remote, Canada
+            </div>
+            <ul>
+              <li> Completed a curriculum covering product strategy, customer discovery, market research, product development, prioritization, and go-to-market fundamentals, with an emphasis on practical product management skills.</li>
+            </ul>
+            
+            <div class="card-links" aria-label="Links for this role">
+              <!-- Certificate -->
+              <a class="icon-circle"
+                 href="images/bvcc-certificate.png"
+                 target="_blank" rel="noopener"
+                 aria-label="certificate">
+                <img src="images/certificate.png" alt="">
+              </a>
+            </div>
+            
+          </div>
+        </div>
+
+
+
+
+            
+        <div class="item" data-side="right">
+          <div class="dot"> 
+            <a href="https://accenture.wd103.myworkdayjobs.com/AccentureCareers/page/a11b752da6ac1001b176341a600f0000" target="_blank" rel="noopener" aria-label="Accenture SLP">
+              <img alt="Accenture logo" src="images/accenture.png">
+            </a>
+          </div>
+          <div class="card">
+            <h3>Student Leadership Program</h3>
+            <div class="meta"> Accenture • Feb 2025 - Apr 2025 • Remote, Canada
+            </div>
+            <ul>
+              <li> Developed communication and problem solving skills through interactive training and mentoring. Gained insights into consulting careers.</li>
+            </ul>
+            
+            <div class="card-links" aria-label="Links for this role">
+              <!-- Certificate -->
+              <a class="icon-circle"
+                 href="images/accenture-certificate.png"
+                 target="_blank" rel="noopener"
+                 aria-label="certificate">
+                <img src="images/certificate.png" alt="">
+              </a>
+            </div>
+            
+          </div>
+        </div>
+
+
+            
+        <div class="item" data-side="left">
+          <div class="dot"> 
+            <a href="https://jobs.citi.com/early-careers#headings-2" target="_blank" rel="noopener" aria-label="Citi EID Program">
+              <img alt="Citi logo" src="images/citi.png">
+            </a>
+          </div>
+          <div class="card">
+            <h3>Early ID Leadership Program</h3>
+            <div class="meta"> Citi • Jan 2025 • Remote, Canada
+            </div>
+            <ul>
+              <li>An overview of financial services and the role of a technology analyst. Refined technical skillset with an industry mentor.</li>
+            </ul>
+
+            <div class="card-links" aria-label="Links for this role">
+              <!-- Certificate -->
+              <a class="icon-circle"
+                 href="images/citi-certificate.png"
+                 target="_blank" rel="noopener"
+                 aria-label="certificate">
+                 <img src="images/certificate.png" alt="">
+              </a>
+            </div>
+            
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    
+
+    <!-- ===== VOLUNTEER EXPERIENCE ===== -->
+    <section id="volunteer" class="section" aria-labelledby="vol-title">
+      <h2 id="vol-title">Volunteer Experience</h2>
+      <div class="timeline" aria-label="Volunteer timeline">
+
+        
+        <div class="item" data-side="left">
+          <div class="dot"> 
+            <a href="https://ccubed.dev/" target="_blank" rel="noopener" aria-label="Ccubed">
+              <img alt="Ccubed logo" src="images/ccubed.png">
+            </a>
+          </div>
+          <div class="card">
+            <h3>Outreach Coordinator</h3>
+            <div class="meta">Ccubed • Mar 2026 - Present • Remote, Canada</div>
+            <ul>
+              <li>Develop and maintain partnerships with corporate sponsors, university departments, and community organizations to support programs empowering computer science students.</li>
+              <li>Secure funding, in-kind donations, and guest speakers by conducting outreach, drafting sponsorship proposals, and leading professional communications with external partners.</li>
+              <li>Collaborate with internal executive teams to align partnership opportunities with organizational goals, increasing access to mentorship, internships, and professional development resources for members.</li>
+            </ul>
+            <div class="card-links" aria-label="Links for this role">
+              <!-- Instagram -->
+              <a class="icon-circle"
+                 href="https://www.instagram.com/ccubed_dev/"
+                 target="_blank" rel="noopener"
+                 rel="noopener"
+                 aria-label="CCubed Instagram">
+                <img src="images/instagram.png" alt="">
+              </a>
+              <!-- Linkedin -->
+              <a class="icon-circle"
+                 href="https://www.linkedin.com/company/ccubed-dev/"
+                 target="_blank" rel="noopener"
+                 rel="noopener"
+                 aria-label="Ccubed Linkedin">
+                <img src="images/linkedin.png" alt="">
+              </a>
+            </div>
+          </div>
+        </div>
+
+
+
+
+        
+        <div class="item" data-side="right">
+          <div class="dot"> 
+            <a href="https://tedxualberta.squarespace.com/?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAcGRvZgJleHRuA2FlbQIxMQBzcnRjBmFwcF9pZA85MzY2MTk3NDMzOTI0NTkAAaflmHAZ1JhIKq8B03Ul-wXBtw5ZcjNEiO9DdZ4b2I8tJLXNObYgB7cngVrmCg_aem_NLfbou9jtehPVS0d4UY9ig" target="_blank" rel="noopener" aria-label="website">
+              <img alt="Organization logo" src="images/tedxualberta.png">
+            </a>
+          </div>
+          <div class="card">
+            <h3>Internal Events Director</h3>
+            <div class="meta">TEDxUAlberta • Sep 2025 - Apr 2026 • Edmonton, Alberta</div>
+            <ul>
+              <li>Facilitated the planning and execution of large-scale internal events, including an annual conference, coordinating timelines, logistics, and programming for hundreds of attendees.</li>
+              <li>Cooperated with cross-functional teams and executive members to ensure alignment on goals, budgets, and event deliverables.</li>
+              <li>Oversaw venue coordination, scheduling, and vendor communication to deliver seamless events while adhering to organizational and university policies.</li>
+            </ul>
+            <div class="card-links" aria-label="Links for this role">
+              <!-- Instagram -->
+              <a class="icon-circle"
+                 href="https://www.instagram.com/tedxualberta/"
+                 target="_blank" rel="noopener"
+                 rel="noopener"
+                 aria-label="Organization Instagram">
+                <img src="images/instagram.png" alt="">
+              </a>
+              <!-- Linkedin -->
+              <a class="icon-circle"
+                 href="https://www.linkedin.com/company/tedxualberta"
+                 target="_blank" rel="noopener"
+                 rel="noopener"
+                 aria-label="Organization Linkedin">
+                <img src="images/linkedin.png" alt="">
+              </a>
+            </div>
+          </div>
+        </div>
+
+      
+      </div>
+    </section>
+
+
+    <!-- ===== EDUCATION ===== -->
+    <section id="education" class="section" aria-labelledby="edu-title">
+      <h2 id="edu-title">Education</h2>
+
+      <!-- Degrees -->
+      <div class="edu-subsection">
+        <!--<div class="edu-label">Higher Education</div>-->
+        <div class="edu-grid">
+
+  
+          <article class="card edu-card">
+            <div class="edu-icon">
+              <a href="https://www.yorku.ca/" target="_blank" rel="noopener">
+                <img src="images/yorku.png" alt="">
+              </a>
+            </div>
+            <h3>B.A in Psychology</h3>
+            <div class="meta">York University • Sep 2026 - Apr 2028 • Edmonton, Alberta</div>
+            <p><i>"The way must be tried."</i></p>
+          </article>
+
+          <article class="card edu-card">
+            <div class="edu-icon">
+              <a href="https://www.ualberta.ca/en/index.html" target="_blank" rel="noopener">
+                <img src="images/ualberta.png" alt="">
+              </a>
+            </div>
+            <h3>B.S in Computing Science</h3>
+            <div class="meta">University of Alberta • Jan 2023 - Apr 2026 • Edmonton, Alberta</div>
+            <p><i>"Whatsoever things are true."</i></p>
+          </article>
+
+       
+        </div>
+      </div>
+
+      <!-- Certificates & Courses -->
+      <!--
+      <div class="edu-subsection">
+        <div class="edu-label">Certificates</div>
+        <div class="edu-grid">
+          
+          <article class="card edu-card">
+            <div class="edu-icon">
+              <img src="images/google.png" alt="google certificate logo">
+            </div>
+            <h3>Data Analytics Professional Certificate</h3>
+            <div class="meta">Google • October 2025</div>
+            <ul>
+              <li>Completed through the "Mentor Me Collective - Grow with Google" program.</li>
+            </ul>
+          </article>
+          
+          
+        </div>
+      </div> -->
+    </section>
+
+
+    <!-- ===== SKILLS ===== -->
+    <section id="skills" class="section" aria-labelledby="skills-title">
+      <h2 id="skills-title">Skills</h2>
+      <div class="card">
+        <h3>Programming</h3>
+        <div class="badges" aria-label="Skills">
+          <span class="badge">R</span>
+          <span class="badge">SQL</span>
+          <span class="badge">Python</span>
+          <span class="badge">C</span>
+          <span class="badge">Java</span>
+          <span class="badge">JavaScript</span>
+          <span class="badge">HTML</span>
+          <span class="badge">CSS</span>
+        </div>
+        <h3>Tools</h3>
+        <div class="badges" aria-label="skills tools">
+          <span class="badge">Google Cloud</span>
+          <span class="badge">Tableau</span>
+          <span class="badge">Figma</span>
+          <span class="badge">Canva</span>
+        </div>
+        <h3>Languages</h3>
+        <div class="badges" aria-label="languages spoken">
+          <span class="badge">English</span>
+          <span class="badge">French</span>
+          <span class="badge">Spanish</span>
+          <span class="badge">Kinyarwanda</span>
+        </div>
+        <h3>Competencies</h3>
+        <div class="badges" aria-label="languages spoken">
+          <span class="badge">Academic Research</span>
+          <span class="badge">UX Design</span>
+          <span class="badge">Data Analytics</span>
+          <span class="badge">Project Management</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CONTACT ===== -->
+    <!--
+    <section id="contact" class="section" aria-labelledby="contact-title">
+      <h2 id="contact-title">Contact</h2>
+      <div class="card">
+        <ul style="list-style:none; padding:0; margin:0">
+          <li><strong>Email:</strong> <a href="mailto:reinemar@ualberta.ca">reinemar@ualberta.ca</a></li>
+          <li><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/marieg11/" target="_blank" rel="noopener">linkedin.com/in/marieg11</a></li>
+          <li><strong>GitHub:</strong> <a href="https://github.com/marieg11" target="_blank" rel="noopener">github.com/marieg11</a></li>
+        </ul>
+      </div>
+    </section>
+    -->
+    <section id="contact" class="section" aria-labelledby="contact-title">
+      <h2 id="contact-title">Contact</h2>
+
+      <div class="card">
+        <form id="contactForm" class="contact-form" action="https://formspree.io/f/mojnbddk" method="POST" autocomplete="off">
+          
+          <label class="field">
+              <span class="field-label">Name</span>
+              <input
+                name="name"
+                type="text"
+                autocomplete="new-password"
+                autocapitalize="words"
+                spellcheck="false"
+                required>
+          </label>
+
+          <label class="field">
+              <span class="field-label">Email</span>
+              <input
+                name="email"
+                type="email"
+                autocomplete="new-password"
+                autocapitalize="none"
+                spellcheck="false"
+                required>
+          </label>
+
+          <label class="field">
+            <span class="field-label">Message</span>
+            <textarea name="message" rows="6" required></textarea>
+          </label>
+
+          <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+
+          <button class="btn btn--ghost" type="submit">Send Message</button>
+
+          <p id="contactSuccess" class="form-note" hidden>
+            ✔ Message sent successfully!
+          </p>
+          <p id="contactError" class="form-note" hidden>
+            ✘ Something went wrong. Please try again.
+          </p>
+        </form>
+      </div>
+    </section>
+
+    
+  </main>
+
+  <!-- Project video overlay -->
+  <div class="proj-video-overlay" id="projVideoOverlay" aria-hidden="true">
+    <div class="proj-video-inner">
+      <button type="button"
+              class="proj-video-close"
+              aria-label="Close video">✕</button>
+      <video id="projVideo" controls playsinline></video>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <small>
+        <span class="copyright">© <span id="year"></span> Marie Gateka • </span>
+        <a href="#about" data-scroll="#about">Back to top ↑</a>
+      </small>
+    </div>
+  </footer>
+
+  <script>
+    // ===== Theme persistence & toggle =====
+    const root = document.documentElement;
+    const toggleBtn = document.getElementById('themeToggle');
+    const icon = document.getElementById('themeIcon');
+    //const label = document.getElementById('themeLabel');
+
+    function applyTheme(mode){
+      if(mode==='light'){
+        root.classList.add('light');
+        icon.textContent='☀️';
+        //label.textContent='Light Mode';
+        toggleBtn.setAttribute('title', 'Switch to dark mode');
+        toggleBtn.setAttribute('aria-pressed','true');
+      } else {
+        root.classList.remove('light');
+        icon.textContent='🌙';
+        //label.textContent='Dark Mode';
+        toggleBtn.setAttribute('title', 'Switch to light mode');
+        toggleBtn.setAttribute('aria-pressed','false');
+      }
+      localStorage.setItem('theme', mode);
+    }
+    const saved = localStorage.getItem('theme');
+    applyTheme(saved || 'dark');
+
+    toggleBtn.addEventListener('click', ()=>{
+      const next = root.classList.contains('light') ? 'dark' : 'light';
+      applyTheme(next);
+    });
+
+    document.getElementById('year').textContent=new Date().getFullYear();
+
+    // Alternate sides for timelines if data-side omitted
+    document.querySelectorAll('.timeline').forEach(tl=>{
+      const items=[...tl.querySelectorAll('.item')];
+      items.forEach((it,i)=>{ if(!it.dataset.side){ it.dataset.side = i%2? 'right':'left'; } });
+    });
+
+    // ===== Hamburger menu logic (all screen sizes) =====
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileMenuClose = document.getElementById('mobileMenuClose');
+
+    function openMenu(){
+      mobileMenu.classList.add('open');
+      menuToggle.setAttribute('aria-expanded','true');
+    }
+    function closeMenu(){
+      mobileMenu.classList.remove('open');
+      menuToggle.setAttribute('aria-expanded','false');
+    }
+
+    if(menuToggle && mobileMenu){
+      menuToggle.addEventListener('click', () => {
+        if(mobileMenu.classList.contains('open')){
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+    }
+    if(mobileMenuClose){
+      mobileMenuClose.addEventListener('click', closeMenu);
+    }
+    if(mobileMenu){
+      mobileMenu.querySelectorAll('a').forEach(link=>{
+        link.addEventListener('click', closeMenu);
+      });
+    }
+
+    // ===== Smooth scroll between sections without changing the URL hash =====
+    document.querySelectorAll('[data-scroll]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();  // don't update hash / history
+
+        const targetSelector = link.getAttribute('data-scroll');
+        const target = document.querySelector(targetSelector);
+        if (!target) return;
+
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      });
+    });
+
+    // ===== Project video popup =====
+    const projOverlay = document.getElementById('projVideoOverlay');
+    const projVideo = document.getElementById('projVideo');
+    const projClose = document.querySelector('.proj-video-close');
+
+    function openProjectVideo(src){
+      if(!projOverlay || !projVideo) return;
+      projVideo.src = src;
+      projOverlay.classList.add('open');
+      projOverlay.setAttribute('aria-hidden','false');
+      projVideo.play().catch(() => {});
+    }
+
+    function closeProjectVideo(){
+      if(!projOverlay || !projVideo) return;
+      projOverlay.classList.remove('open');
+      projOverlay.setAttribute('aria-hidden','true');
+      projVideo.pause();
+      projVideo.removeAttribute('src'); // reset
+      projVideo.load();
+    }
+
+    // Click on thumbnail button
+    document.querySelectorAll('.proj-thumbnail-button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const src = btn.getAttribute('data-video');
+        if(src) openProjectVideo(src);
+      });
+    });
+
+    // Close button
+    if(projClose){
+      projClose.addEventListener('click', closeProjectVideo);
+    }
+
+    /*
+    // Click outside the video (on the dark backdrop)
+    if(projOverlay){
+      projOverlay.addEventListener('click', (e) => {
+        if(e.target === projOverlay){
+          closeProjectVideo();
+        }
+      });
+    }*/
+
+    // menu’s top edge will always sit exactly flush with the bottom edge of the header
+    const header = document.querySelector('header');
+    function updateHeaderHeight(){
+      if (!header) return;
+      const h = header.offsetHeight;
+      document.documentElement.style.setProperty('--header-height', h + 'px');
+    }
+    updateHeaderHeight();
+    window.addEventListener('resize', updateHeaderHeight);
+
+    // ===== Contact form: submit to Formspree without leaving the page =====
+    const contactForm = document.getElementById('contactForm');
+    const contactSuccess = document.getElementById('contactSuccess');
+    const contactError = document.getElementById('contactError');
+
+    if (contactForm) {
+      contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // hide old messages
+        contactSuccess.hidden = true;
+        contactError.hidden = true;
+
+        const formData = new FormData(contactForm);
+
+        try {
+          const res = await fetch(contactForm.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'Accept': 'application/json' }
+          });
+
+          if (res.ok) {
+            contactForm.reset();              // clears the fields
+            contactSuccess.hidden = false;    // show success message
+          } else {
+            contactError.hidden = false;
+          }
+        } catch (err) {
+          contactError.hidden = false;
+        }
+      });
+    }
+  </script>
+</body>
+</html>
